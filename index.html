@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <title>Calculator</title>
+  </head>
+  <body>
+    <form method="POST" action="/calculate">
+      <input type="text" name="num1" placeholder="Enter first number" required>
+      <select name="operation" required>
+        <option value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+      </select>
+      <input type="text" name="num2" placeholder="Enter second number" required>
+      <input type="submit" value="Calculate">
+    </form>
+  </body>
+</html>
