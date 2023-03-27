@@ -1,9 +1,20 @@
+from flask import Flask, render_template, request
 from tkinter import *
 import math
 from pygame import mixer
 import speech_recognition #this converts our audio into text
 
+app = Flask(__name__)
+
 mixer.init()
+
+@app.route('/')
+def home():
+    return render_template('flaskindex.html')
+
+@app.route('/calculate', methods=['POST'])
+def calculate():
+    expression = request.form['expression']
 
  
 def click(value):
@@ -95,6 +106,7 @@ def click(value):
 
     except SyntaxError:
         pass
+    
 
 def add(a,b):
     return a+b
@@ -116,6 +128,11 @@ def lcm(a,b):
 def hcf(a,b):
     h=math.gcd(a,b)
     return h
+    # Your Calculator code here
+    return render_template('index.html', result=result, expression=expression)
+
+
+
 
 operations={'ADD':add,'ADDITION':add,'SUM':add,'PLUS':add,
             'SUBTRACTION':sub , 'DIFFERENCE':sub , 'MINUS':sub , 'SUBTRACT':sub,
@@ -164,6 +181,7 @@ def audio():
 
         except:
             pass
+        
 
 
 
@@ -202,3 +220,7 @@ for i in button_text_list:
         columnvalue = 0
 
 root.mainloop()
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
