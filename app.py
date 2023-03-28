@@ -4,9 +4,6 @@ from calculator import add, subtract, multiply, divide
 
 app = Flask(__name__)
 
-if __name__ == '__main__':
-    app.run(debug=True)
-    
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -31,5 +28,6 @@ def calculate():
         operation_symbol = '/'
 
     return render_template('result.html', num1=num1, num2=num2, operation=operation_symbol, result=result)
-
-
+  
+if __name__ == "__main__":
+    app.run(debug=True)
