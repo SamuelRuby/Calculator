@@ -53,7 +53,7 @@ jobs:
       # - notify_slack_success
       # - notify_slack_error
     
-  build-notes-application-images:
+  build-application-images:
     <<: *baseImage
     steps:
       - checkout
@@ -64,18 +64,7 @@ jobs:
           name: Build notes application images
           command: |
             docker --version #print the version for logging
-            docker image build -t notes-api ./fullstack-notes-application/api/
-            docker image build -t notes-client ./fullstack-notes-application/client
-            docker image build -t notes-postgres ./fullstack-notes-application/postgres
-            docker image build -t notes-nginx ./fullstack-notes-application/nginx
-        
-      - run:
-          name: Tag images
-          command: |
-            docker tag notes-api royalboe/notes-api:latest
-            docker tag notes-client royalboe/notes-client:latest
-            docker tag notes-postgres royalboe/notes-postgres:latest
-            docker tag notes-nginx royalboe/notes-nginx:latest
+            docker image build -t royalboe/calculator .
       
       - run:
           name: Login
@@ -85,10 +74,7 @@ jobs:
       - run:
           name: Push application images
           command: |
-            docker push royalboe/notes-api:latest
-            docker push royalboe/notes-client:latest
-            docker push royalboe/notes-postgres:latest
-            docker push royalboe/notes-nginx:latest
+            docker push royalboe/calculator:latest
       
   configure-infra:
       <<: *terraformImage
@@ -101,100 +87,11 @@ jobs:
             terraform init
             terraform apply -auto-approve
 
-  deploy-note-app:
-    <<: *nImage
-    steps:
-      - checkout
-      - kubernetes/install:
-          kubectl-version: v1.22.0
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: royalboe-eks-vpc-cluster
-          aws-region: us-east-1
-      - deploy-ingress
-      - run:
-          command: |
-            kubectl apply -f ./fullstack-notes-application/k8s
 
-  deploy-socks-app:
-    <<: *nImage
-    steps:
-      - checkout
-      - kubernetes/install:
-            kubectl-version: v1.22.0
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: royalboe-eks-vpc-cluster
-          aws-region: us-east-1
-      - run:
-          command: |
-            cd socks-microservices/deploy/kubernetes
-            kubectl apply -f manifests
-          name: deploy applications
-      - run:
-          command: |
-            kubectl get services
-            kubectl get pods
-            kubectl get deployments
-          name: check deployments
-      - run: 
-          command: |
-            kubectl apply -f ./socks-microservices/deploy/kubernetes/manifests-monitoring
-          name: deploy monitoring    
-
-  bring-down-web-app:
-    <<: *kubeImage
-    steps:
-      - checkout
-      - kubernetes/install:
-          kubectl-version: v1.22.0
-      - aws-eks/update-kubeconfig-with-authenticator:
-          cluster-name: royalboe-eks-vpc-cluster
-          aws-region: us-east-1
-      - run:
-          command: |
-            kubectl delete -f deploy.yaml
-      - run:
-          command: |
-            kubectl delete -f ./fullstack-notes-application/k8s
-          name: Bring down notes web app
-      - run:
-          command: |
-            kubectl delete -f ./socks-microservices/deploy/kubernetes/manifests-monitoring
-          name: Bring down monitoring
-      - run:
-          command: |
-            kubectl delete -f socks-microservices/deploy/kubernetes/manifests
-          name: Bring down socks web app
-
-  tear-down-infra:
-    <<: *terraformImage
-    steps:
-      - checkout
-      - run:
-          name: Tear down infrastructure
-          command: |
-            cd .circleci/terraform-cluster
-            terraform init
-            terraform destroy -auto-approve
-
-# workflows:
-#   default:
-#     jobs:
-#       - build-base-image
-#       - build-notes-application-images:
-#          requires: 
-#             - build-base-image
-#       - configure-infra
-#       - deploy-socks-app:
-#          requires:
-#           - configure-infra
-#       - deploy-note-app:
-#          requires:
-#           - configure-infra
-#       - bring-down-web-app:
-#          requires:
-#           - deploy-socks-app
-#           - deploy-note-app
-#       - tear-down-infra:
-#           requires:
-#             - bring-down-web-app
-#             - configure-infra
+workflows:
+  default:
+    jobs:
+      - build-base-image
+      - build-application-image:
+         requires: 
+            - build-base-image
