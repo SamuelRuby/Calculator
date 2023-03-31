@@ -117,13 +117,18 @@ def hcf(a,b):
     h=math.gcd(a,b)
     return h
 
+def sine(theta):
+    return math.sin(math.radians(theta))
+
+def cos(theta):
+    return math.cos(math.radians(theta))
+
 operations={'ADD':add,'ADDITION':add,'SUM':add,'PLUS':add,
             'SUBTRACTION':sub , 'DIFFERENCE':sub , 'MINUS':sub , 'SUBTRACT':sub,
-            'PRODUCT': mul, 'MULTIPLICATION': mul,'MULTIPLY': mul,
-            'DIVISION': div, 'DIV': div, 'DIVIDE': div,
-            'LCM':lcm , 'HCF':hcf,
-            'MOD':mod ,'REMAINDER':mod , 'MODULUS':mod }
-
+            'PRODUCT': mul, 'MULTIPLICATION': mul,'MULTIPLY': mul, 'SIN': sine,
+            'LCM':lcm , 'HCF':hcf, 'COS': cos, 'SINE': sine,
+            'MOD':mod ,'REMAINDER':mod , 'CURSE': cos, 'MODULUS':mod 
+            }
 
 def findNumbers(t):
     l=[]
@@ -135,13 +140,13 @@ def findNumbers(t):
     return l
 
 def audio():
-    #print ('holla i am here to help you')
+    #print ('hola, estoy aqui para ayudarte')
     mixer.music.load('Modalities\music1.mp3')
     mixer.music.play()
     sr = speech_recognition.Recognizer() 
-    with speech_recognition.Microphone()as m: #try except block accounts for unclear voice, and sound level. could be finetuned 
+    with speech_recognition.Microphone()as m: #try except block accounts for unclear voice, and sound level. could be finetuned. difficult to pick voice in noisy environments 
         try:
-            sr.adjust_for_ambient_noise(m,duration=0.2)
+            sr.adjust_for_ambient_noise(m,duration=0.2) #gap between sentence 1 and 2
             voice=sr.listen(m)
             text=sr.recognize_google(voice) #converts to text
             #print (text)
@@ -160,45 +165,45 @@ def audio():
 
                 else:
                     pass
-
+                
 
         except:
             pass
 
 
 
-root = Tk()
+root = Tk() #creates a window for our buttons
 root.title('Smart Calculator')
-root.config(bg='IndianRed')
-root.geometry('680x486+100+100')
+root.config(bg='maroon')
+root.geometry('680x486+100+100') #size of our window
 
 logoImage = PhotoImage(file='Modalities\logo.png')
-logoLabel = Label(root, image=logoImage, bg='IndianRed')
-logoLabel.grid(row=0, column=0)
+logoLabel = Label(root, image=logoImage, bg='maroon')
+logoLabel.grid(row=0, column=0) #postion of the label
 
-entryField = Entry(root, font=('arial', 20, 'bold'), bg='IndianRed', fg='white', bd=10, relief=SUNKEN, width=30)
-entryField.grid(row=0, column=0, columnspan=8)
+entryField = Entry(root, font=('arial', 20, 'bold'), bg='maroon', fg='white', bd=10, relief=SUNKEN, width=30) #bd-border, and style is sunken 
+entryField.grid(row=0, column=0, columnspan=8) #so that the buttons align. entry field will only take 8 column spaces in row 1, and then it goes to the next row
 
 micImage = PhotoImage(file='Modalities\microphone.png')
-micButton = Button(root, image=micImage, bd=0, bg='IndianRed', activebackground='IndianRed'
-                   ,command=audio)
+micButton = Button(root, image=micImage, bd=0, bg='maroon', activebackground='maroon'
+                   ,command=audio) #command =lambda, button=i, click(button)
 micButton.grid(row=0, column=7)
 
 button_text_list = ["C", "CE", "√", "+", "π", "cosθ", "tanθ", "sinθ",
                     "1", "2", "3", "-", "2π", "cosh", "tanh", "sinh",
-                    "4", "5", "6", "*", chr(8731), "x\u02b8", "x\u00B3", "x\u00B2",
+                    "4", "5", "6", "*", chr(8731), "x\u02b8", "x\u00B3", "x\u00B2", #x to power of y, x to power 3, x to power 2
                     "7", "8", "9", chr(247), "ln", "deg", "rad", "e",
                     "0", ".", "%", "=", "log₁₀", "(", ")", "x!"]
 rowvalue = 1
 columnvalue = 0
 for i in button_text_list:
 
-    button = Button(root, width=5, height=2, bd=2, relief=SUNKEN, text=i, bg='IndianRed', fg='white',
-                    font=('arial', 18, 'bold'), activebackground='IndianRed', command=lambda button=i: click(button))
+    button = Button(root, width=5, height=2, bd=2, relief=SUNKEN, text=i, bg='maroon', fg='white',
+                    font=('arial', 18, 'bold'), activebackground='maroon', command=lambda button=i: click(button)) #same as entryfield above
     button.grid(row=rowvalue, column=columnvalue, pady=1)
-    columnvalue += 1
-    if columnvalue > 7:
-        rowvalue += 1
+    columnvalue += 1 #iteration values to create all the buttons
+    if columnvalue > 7: #to divide the buttons and order them column by column, row by row
+        rowvalue += 1 #adding another column, after the first row has been filled up with 8 vals
         columnvalue = 0
 
-root.mainloop()
+root.mainloop() #keeps our window on our loop so that we can run it continuously

@@ -135,7 +135,7 @@ def findNumbers(t):
     return l
 
 def audio():
-    #print ('holla i am here to help you')
+    #print ('hola i am here to help you')
     mixer.music.load('Modalities\music1.mp3')
     mixer.music.play()
     sr = speech_recognition.Recognizer() 
