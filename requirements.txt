@@ -3,3 +3,4 @@ python ==3.10.5
 Pyaudio == 0.2.13
 Pygame ==2.3.0
 SpeechRecognition == 3.10.0
+pyinstaller == 5.9.0

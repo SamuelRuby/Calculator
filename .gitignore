@@ -2,3 +2,6 @@ __pycache__
 env
 cad
 main.py*
+del
+build
+VoiceCalc.spec
